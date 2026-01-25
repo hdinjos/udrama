@@ -30,15 +30,14 @@ export class DramaService {
 
   async findAll() {
     try {
-      const data = await this.db.query.dramas.findFirst();
-      console.log(data);
+      const data = await this.db.query.dramas.findMany();
+      return {
+        message: 'retrieve all dramas',
+        data: data,
+      };
     } catch (err) {
       console.log(err);
     }
-    return {
-      message: 'retrieve all dramas',
-      data: this.dramas,
-    };
   }
 
   findOne(id: string): ApiResponse<Drama | null> {
@@ -57,21 +56,23 @@ export class DramaService {
     };
   }
 
-  store(body: DramaInfo) {
-    this.reqValidate(body);
-    const lastData = this.dramas.at(-1);
+  async store(body: any) {
+    // this.reqValidate(body);
+    // const lastData = this.dramas.at(-1);
 
-    const lastIndex = lastData?.id || 0;
+    // const lastIndex = lastData?.id || 0;
 
-    const payload: Drama = {
-      id: lastIndex + 1,
-      ...body,
-    };
-    this.dramas = [...this.dramas, payload];
+    // const payload: Drama = {
+    //   id: lastIndex + 1,
+    //   ...body,
+    // };
+    // this.dramas = [...this.dramas, payload];
+
+    const result = await this.db.insert(schema.dramas).values(body).returning();
 
     return {
       message: 'created drama success',
-      data: payload,
+      data: result,
     };
   }
 

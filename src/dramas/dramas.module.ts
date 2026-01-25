@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DramasController } from './dramas.controller';
-import { DramaService } from './drama.service';
+import { DramaService } from './dramas.service';
 
 @Module({
   controllers: [DramasController],
