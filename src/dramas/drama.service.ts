@@ -1,4 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { DrizzleService } from 'src/database/drizzle.service';
+import * as schema from '../database/schemas';
+import { eq } from 'drizzle-orm';
 
 interface DramaInfo {
   title: string;
@@ -19,7 +22,19 @@ type RetriveAllDramasResponse = ApiResponse<Drama[]>;
 export class DramaService {
   private dramas: Drama[] = [];
 
-  findAll(): RetriveAllDramasResponse {
+  constructor(private readonly drizzleService: DrizzleService) {}
+
+  private get db() {
+    return this.drizzleService.db;
+  }
+
+  async findAll() {
+    try {
+      const data = await this.db.query.dramas.findFirst();
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
     return {
       message: 'retrieve all dramas',
       data: this.dramas,

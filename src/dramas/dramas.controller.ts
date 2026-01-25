@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Post, Body, Put } from '@nestjs/common';
-import { DramaService } from './drams.service';
+import { DramaService } from './drama.service';
 
 interface DramaInfo {
   title: string;
@@ -21,7 +21,7 @@ export class DramasController {
   constructor(private readonly dramaService: DramaService) {}
 
   @Get()
-  findAll(): RetriveAllDramasResponse {
+  findAll(): any {
     return this.dramaService.findAll();
   }
 
