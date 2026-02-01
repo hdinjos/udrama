@@ -1,5 +1,6 @@
 import { Controller, Get, Param, Post, Body, Put } from '@nestjs/common';
 import { DramaService } from './dramas.service';
+import { CreateDramaDto } from './dto/create-drama.dto';
 
 interface DramaInfo {
   title: string;
@@ -31,7 +32,7 @@ export class DramasController {
   }
 
   @Post()
-  store(@Body() body: any): any {
+  store(@Body() body: CreateDramaDto): any {
     return this.dramaService.store(body);
   }
 
