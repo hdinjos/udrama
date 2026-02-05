@@ -1,9 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { DRIZZLE } from './database.provider';
-import * as schema from '../database/schemas';
-import { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import type { DB } from './database.type';
 
 @Injectable()
 export class DrizzleService {
-  constructor(@Inject(DRIZZLE) public db: NodePgDatabase<typeof schema>) {}
+  constructor(@Inject(DRIZZLE) public db: DB) {}
 }
