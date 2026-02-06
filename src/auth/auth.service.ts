@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PasswordService } from 'src/common/security/password/pasword.service';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { LoginDto } from './dto/signin.dto';
 
 @Injectable()
 export class AuthService {
@@ -11,7 +12,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signIn(email: string, password: string) {
+  async signIn({ email, password }: LoginDto) {
     const user = await this.userService.findUserByEmail(email);
     if (user?.password) {
       const verifiedPassword = await this.passwordService.verify(
