@@ -1,6 +1,15 @@
-import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  BadRequestException,
+  Get,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/signin.dto';
+import { AuthGuard } from 'src/common/guards';
 
 @Controller('auth')
 export class AuthController {
@@ -12,5 +21,14 @@ export class AuthController {
 
     if (data) return data;
     throw new BadRequestException('email or password invalid');
+  }
+
+  @UseGuards(AuthGuard)
+  @Get('profile')
+  profile(@Request() req) {
+    return {
+      message: 'access profile success',
+      data: req.user,
+    };
   }
 }

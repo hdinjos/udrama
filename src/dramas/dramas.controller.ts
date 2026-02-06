@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { DramaService } from './dramas.service';
 import { CreateDramaDto } from './dto/create-drama.dto';
-import { AuthGuard } from 'src/common/guards';
 
 interface DramaInfo {
   title: string;
@@ -26,7 +25,6 @@ interface ApiResponse<T> {
 
 type RetriveAllDramasResponse = ApiResponse<Drama[]>;
 
-@UseGuards(new AuthGuard())
 @Controller('dramas')
 export class DramasController {
   constructor(private readonly dramaService: DramaService) {}
