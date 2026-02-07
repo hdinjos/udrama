@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { DrizzleService } from 'src/database/drizzle.service';
+import { DrizzleService } from 'src/core/database/drizzle.service';
 import { PasswordService } from 'src/common/security/password/pasword.service';
-import { users } from 'src/database/schemas';
+import { users } from 'src/core/database/schemas';
 
 @Injectable()
 export class UserService {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { DrizzleService } from 'src/database/drizzle.service';
-import * as schema from '../database/schemas';
+import { DrizzleService } from 'src/core/database/drizzle.service';
+import * as schema from '../core/database/schemas';
 import { eq } from 'drizzle-orm';
 
 interface DramaInfo {
