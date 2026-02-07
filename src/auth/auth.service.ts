@@ -1,4 +1,4 @@
-import { Injectable, Inject, Request } from '@nestjs/common';
+import { Injectable, Request } from '@nestjs/common';
 import { PasswordService } from 'src/common/security/password/pasword.service';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -35,9 +35,19 @@ export class AuthService {
     return false;
   }
 
-  async logOut(req: Request) {
-    console.log(req['user']);
+  async signOut(req: Request) {
+    const toExp = this.getReaminingExpired(req);
     const [_, token] = req['headers']['authorization'].split(' ') ?? [];
-    console.log(token);
+
+    await this.redisService.set('blacklist:${token}', token, toExp);
+  }
+
+  getReaminingExpired(req: Request): number {
+    const exp: number = req['user']['exp'] || 1;
+    const now: number = Math.floor(Date.now() / 1000);
+    const result = exp - now;
+    console.log(result);
+
+    return result;
   }
 }

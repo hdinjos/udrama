@@ -25,17 +25,17 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('profile')
-  profile(@Request() req) {
+  profile(@Request() req: Request) {
     return {
       message: 'access profile success',
-      data: req.user,
+      data: req['user'],
     };
   }
 
   @UseGuards(AuthGuard)
   @Post('logout')
-  async singOut(@Request() req) {
-    this.authService.logOut(req);
+  async singOut(@Request() req: Request) {
+    this.authService.signOut(req);
     return {
       message: 'logout success',
     };

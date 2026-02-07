@@ -11,17 +11,23 @@ import {
   NotBeforeError,
 } from '@nestjs/jwt';
 
+import { RedisService } from 'src/core/redis/redis.service';
+
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly redisService: RedisService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
     const token = this.getToken(request);
-    if (!token) {
-      throw new UnauthorizedException();
-    }
+    if (!token) throw new UnauthorizedException();
+
+    const blacklistToken = await this.redisService.get('blacklist:${token}');
+    if (blacklistToken === token) throw new UnauthorizedException();
 
     try {
       const tokenVerified = await this.jwtService.verifyAsync(token);
