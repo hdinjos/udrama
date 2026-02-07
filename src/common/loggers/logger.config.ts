@@ -1,45 +1,55 @@
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 
+const { combine, timestamp, errors, json, printf, colorize } = winston.format;
+
+const isProduction = process.env.NODE_ENV === 'production';
+
+// Format untuk development (human readable)
+const devFormat = printf(({ level, message, timestamp, context, stack }) => {
+  return `${timestamp} [${context || 'App'}] ${level}: ${stack || message}`;
+});
+
+// Transport file rotation (best practice)
+const fileTransport = new winston.transports.DailyRotateFile({
+  dirname: 'logs',
+  filename: '%DATE%-application.log',
+  datePattern: 'YYYY-MM-DD',
+  zippedArchive: true,
+  maxSize: '20m',
+  maxFiles: '14d',
+  level: 'info',
+});
+
+// Transport error khusus
+const errorTransport = new winston.transports.DailyRotateFile({
+  dirname: 'logs',
+  filename: '%DATE%-error.log',
+  datePattern: 'YYYY-MM-DD',
+  zippedArchive: true,
+  maxSize: '20m',
+  maxFiles: '30d',
+  level: 'error',
+});
+
 export const winstonConfig = {
+  level: isProduction ? 'info' : 'debug',
+  format: combine(
+    timestamp(),
+    errors({ stack: true }),
+    isProduction ? json() : devFormat,
+  ),
+  defaultMeta: {
+    service: 'nestjs-app',
+    environment: process.env.NODE_ENV || 'development',
+  },
   transports: [
-    // 1. Console Transport: Untuk melihat log saat development
     new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.ms(),
-        winston.format.colorize(),
-        winston.format.printf(({ timestamp, level, message, context, ms }) => {
-          return `[Nest] - ${timestamp} ${level} [${context}] ${message} ${ms}`;
-        }),
-      ),
+      format: isProduction
+        ? combine(timestamp(), json())
+        : combine(colorize(), timestamp(), devFormat),
     }),
-
-    // 2. File Transport (Error): Menyimpan log error secara terpisah
-    new winston.transports.DailyRotateFile({
-      filename: 'logs/error-%DATE%.log',
-      level: 'error',
-      datePattern: 'YYYY-MM-DD',
-      zippedArchive: true,
-      maxSize: '20m',
-      maxFiles: '14d',
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json(),
-      ),
-    }),
-
-    // 3. File Transport (Combined): Menyimpan semua aktivitas aplikasi
-    new winston.transports.DailyRotateFile({
-      filename: 'logs/combined-%DATE%.log',
-      datePattern: 'YYYY-MM-DD',
-      zippedArchive: true,
-      maxSize: '20m',
-      maxFiles: '30d', // Simpan selama 30 hari
-      format: winston.format.combine(
-        winston.format.timestamp(),
-        winston.format.json(),
-      ),
-    }),
+    fileTransport,
+    errorTransport,
   ],
 };
