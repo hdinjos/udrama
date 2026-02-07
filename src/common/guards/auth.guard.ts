@@ -49,8 +49,4 @@ export class AuthGuard implements CanActivate {
     const [type, token] = headers['authorization']?.split(' ') ?? [];
     return type !== 'Bearer' ? '' : token;
   }
-
-  private isJwtError(err: unknown): err is { name: string } {
-    return typeof err === 'object' && err !== null && 'name' in err;
-  }
 }

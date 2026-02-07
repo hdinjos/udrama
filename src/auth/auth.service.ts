@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, Request } from '@nestjs/common';
 import { PasswordService } from 'src/common/security/password/pasword.service';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/signin.dto';
+import { RedisService } from 'src/core/redis/redis.service';
 
 @Injectable()
 export class AuthService {
@@ -10,6 +11,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly passwordService: PasswordService,
     private readonly jwtService: JwtService,
+    private readonly redisService: RedisService,
   ) {}
 
   async signIn({ email, password }: LoginDto) {
@@ -31,5 +33,11 @@ export class AuthService {
       }
     }
     return false;
+  }
+
+  async logOut(req: Request) {
+    console.log(req['user']);
+    const [_, token] = req['headers']['authorization'].split(' ') ?? [];
+    console.log(token);
   }
 }

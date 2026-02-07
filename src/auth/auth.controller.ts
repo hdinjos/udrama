@@ -31,4 +31,13 @@ export class AuthController {
       data: req.user,
     };
   }
+
+  @UseGuards(AuthGuard)
+  @Post('logout')
+  async singOut(@Request() req) {
+    this.authService.logOut(req);
+    return {
+      message: 'logout success',
+    };
+  }
 }

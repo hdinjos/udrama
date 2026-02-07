@@ -1,4 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import Redis from 'ioredis';
 
-@Injectable()
-export class RedisService {}
+export const REDIS_CLIENT = 'REDIS_CLIENT';
+
+export const RedisProvider = {
+  provide: REDIS_CLIENT,
+  useFactory: () => {
+    return new Redis({
+      host: '127.0.0.1',
+      port: 6379,
+    });
+  },
+};
