@@ -46,7 +46,6 @@ export class AuthService {
     const exp: number = req['user']['exp'] || 1;
     const now: number = Math.floor(Date.now() / 1000);
     const result = exp - now;
-    console.log(result);
 
     return result;
   }
