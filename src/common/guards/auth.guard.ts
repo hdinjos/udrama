@@ -4,7 +4,12 @@ import {
   ExecutionContext,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import {
+  JwtService,
+  TokenExpiredError,
+  JsonWebTokenError,
+  NotBeforeError,
+} from '@nestjs/jwt';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -14,16 +19,26 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     const token = this.getToken(request);
-    console.log(token);
     if (!token) {
       throw new UnauthorizedException();
     }
 
-    const tokenVerified = await this.jwtService.verifyAsync(token);
-    if (tokenVerified) {
-      console.log(tokenVerified);
-      request['user'] = tokenVerified;
-      return true;
+    try {
+      const tokenVerified = await this.jwtService.verifyAsync(token);
+      if (tokenVerified) {
+        request['user'] = tokenVerified;
+        return true;
+      }
+    } catch (err) {
+      if (err instanceof TokenExpiredError) {
+        throw new UnauthorizedException('token expired');
+      } else if (err instanceof JsonWebTokenError) {
+        throw new UnauthorizedException('token not valid');
+      } else if (err instanceof NotBeforeError) {
+        throw new UnauthorizedException('token not active yet');
+      }
+
+      throw new UnauthorizedException();
     }
 
     return false;
@@ -33,5 +48,9 @@ export class AuthGuard implements CanActivate {
     const headers = req['headers'];
     const [type, token] = headers['authorization']?.split(' ') ?? [];
     return type !== 'Bearer' ? '' : token;
+  }
+
+  private isJwtError(err: unknown): err is { name: string } {
+    return typeof err === 'object' && err !== null && 'name' in err;
   }
 }

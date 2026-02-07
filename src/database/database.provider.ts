@@ -9,7 +9,7 @@ export const databaseProvider = {
   provide: DRIZZLE,
   useFactory: (configService: ConfigService) => {
     const pool = new Pool({
-      connectionString: configService.get<string>('DATABASE_URL'),
+      connectionString: configService.getOrThrow('database.url'),
     });
 
     return drizzle({ client: pool, casing: 'snake_case', schema });
