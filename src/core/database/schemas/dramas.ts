@@ -12,7 +12,7 @@ export const dramas = pgTable('dramas', {
   year: integer().notNull(),
   categoryId: integer(),
   description: text(),
-  updated_at: timestamp(),
-  created_at: timestamp().defaultNow().notNull(),
-  deleted_at: timestamp(),
+  updatedAt: timestamp(),
+  createdAt: timestamp().defaultNow().notNull(),
+  deletedAt: timestamp(),
 });

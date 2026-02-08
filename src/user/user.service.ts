@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DrizzleService } from 'src/core/database/drizzle.service';
 import { PasswordService } from 'src/common/security/password/pasword.service';
-import { users } from 'src/core/database/schemas';
+import { users, roles } from 'src/core/database/schemas';
 
 @Injectable()
 export class UserService {
@@ -27,5 +27,21 @@ export class UserService {
       password: passHash,
       email: 'ngadmin@gmail.com',
     });
+  }
+
+  public async generateRole() {
+    const roleNames = [
+      {
+        name: 'admin',
+      },
+      {
+        name: 'user',
+      },
+    ];
+    await this.db.insert(roles).values(roleNames);
+  }
+
+  public async getUsers() {
+    return await this.db.query.users.findMany();
   }
 }
