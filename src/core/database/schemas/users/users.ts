@@ -8,4 +8,5 @@ export const users = pgTable('users', {
   updated_at: timestamp(),
   created_at: timestamp().defaultNow().notNull(),
   deleted_at: timestamp(),
+  roleId: integer(),
 });
