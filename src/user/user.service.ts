@@ -23,6 +23,9 @@ export class UserService {
   public findUserByEmail(email: string) {
     return this.db.query.users.findFirst({
       where: (users, { eq }) => eq(users.email, email),
+      with: {
+        role: true,
+      },
     });
   }
 
@@ -52,6 +55,9 @@ export class UserService {
       columns: {
         password: false,
         deletedAt: false,
+      },
+      with: {
+        role: true,
       },
     });
   }

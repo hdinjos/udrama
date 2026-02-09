@@ -10,8 +10,10 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/user-create.dto';
 import { AuthGuard } from 'src/common/guards';
+import { Roles } from 'src/common/errors/roles.decorator';
+import { Role } from 'src/common/enums/roles.enum';
+import { RoleGuard } from 'src/common/guards';
 
-@UseGuards(AuthGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -34,10 +36,11 @@ export class UserController {
     };
   }
 
+  @Roles(Role.USER)
+  @UseGuards(AuthGuard, RoleGuard)
   @Get()
   async getUsers() {
     const data = await this.userService.getUsers();
-    console.log(data);
     return {
       success: true,
       message: 'user retrieve success',
@@ -45,6 +48,7 @@ export class UserController {
     };
   }
 
+  @UseGuards(AuthGuard)
   @Post()
   async store(@Body() body: CreateUserDto) {
     const data = await this.userService.storeUser(body);
@@ -55,6 +59,7 @@ export class UserController {
     };
   }
 
+  @UseGuards(AuthGuard)
   @Put(':id')
   async udpate(@Param() { id }, @Body() body: CreateUserDto) {
     const data = await this.userService.updateUser(id, body);
