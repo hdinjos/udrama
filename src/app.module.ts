@@ -10,6 +10,8 @@ import { RedisModule } from './core/redis/redis.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard, RoleGuard } from './common/guards';
 
 @Module({
   imports: [
@@ -24,6 +26,16 @@ import jwtConfig from './config/jwt.config';
     RedisModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RoleGuard,
+    },
+  ],
 })
 export class AppModule {}

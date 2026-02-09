@@ -4,17 +4,17 @@ import {
   Body,
   BadRequestException,
   Get,
-  UseGuards,
   Request,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/signin.dto';
-import { AuthGuard } from 'src/common/guards';
+import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('login')
   async signIn(@Body() body: LoginDto) {
     const data = await this.authService.signIn(body);
@@ -23,7 +23,6 @@ export class AuthController {
     throw new BadRequestException('email or password invalid');
   }
 
-  @UseGuards(AuthGuard)
   @Get('profile')
   profile(@Request() req: Request) {
     return {
@@ -32,7 +31,6 @@ export class AuthController {
     };
   }
 
-  @UseGuards(AuthGuard)
   @Post('logout')
   async singOut(@Request() req: Request) {
     this.authService.signOut(req);
