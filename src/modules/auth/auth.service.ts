@@ -1,6 +1,6 @@
 import { Injectable, Request } from '@nestjs/common';
 import { PasswordService } from 'src/common/security/password/pasword.service';
-import { UserService } from 'src/user/user.service';
+import { UserService } from 'src/modules/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/signin.dto';
 import { RedisService } from 'src/core/redis/redis.service';

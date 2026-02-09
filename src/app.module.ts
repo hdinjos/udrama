@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { DramasModule } from './dramas/dramas.module';
+import { DramasModule } from './modules/dramas/dramas.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './core/database/database.module';
-import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { UserModule } from './modules/user/user.module';
 import { RedisModule } from './core/redis/redis.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
