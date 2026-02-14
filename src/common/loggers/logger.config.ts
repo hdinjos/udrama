@@ -1,13 +1,17 @@
 import * as winston from 'winston';
 import 'winston-daily-rotate-file';
 
-const { combine, timestamp, errors, json, printf, colorize } = winston.format;
+const { combine, timestamp, errors, json, printf, colorize, splat } =
+  winston.format;
 
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Format untuk development (human readable)
-const devFormat = printf(({ level, message, timestamp, context, stack }) => {
-  return `${timestamp} [${context || 'App'}] ${level}: ${stack || message}`;
+const devFormat = printf((info) => {
+  if (info.error) {
+    return `${info.timestamp} [${info.context || 'App'}] ${info.level}: ${info.stack || info.message}, \n ${JSON.stringify(info.error, null, 0)}`;
+  }
+  return `${info.timestamp} [${info.context || 'App'}] ${info.level}: ${info.stack || info.message}`;
 });
 
 // Transport file rotation (best practice)
@@ -37,6 +41,7 @@ export const winstonConfig = {
   format: combine(
     timestamp(),
     errors({ stack: true }),
+    splat(),
     isProduction ? json() : devFormat,
   ),
   defaultMeta: {
