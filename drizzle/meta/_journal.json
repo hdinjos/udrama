@@ -5,15 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1770563343643,
-      "tag": "0000_busy_sphinx",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1770907369785,
-      "tag": "0001_bent_vision",
+      "when": 1771351387159,
+      "tag": "0000_easy_nitro",
       "breakpoints": true
     }
   ]

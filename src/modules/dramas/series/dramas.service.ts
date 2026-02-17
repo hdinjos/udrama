@@ -29,9 +29,9 @@ export class DramaService {
 
   async findAll() {
     try {
-      const data = await this.db.query.dramas.findMany();
+      const data = await this.db.query.series.findMany();
       return {
-        message: 'retrieve all dramas',
+        message: 'retrieve all series',
         data: data,
       };
     } catch (err) {
@@ -67,10 +67,10 @@ export class DramaService {
     // };
     // this.dramas = [...this.dramas, payload];
 
-    const result = await this.db.insert(schema.dramas).values(body).returning();
+    const result = await this.db.insert(schema.series).values(body).returning();
 
     return {
-      message: 'created drama success',
+      message: 'created series success',
       data: result,
     };
   }
