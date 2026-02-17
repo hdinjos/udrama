@@ -12,6 +12,6 @@ export const genres = pgTable('genres', {
   description: text(),
   slug: varchar({ length: 255 }).unique().notNull(),
   createdAt: timestamp().defaultNow().notNull(),
-  updatedAt: timestamp(),
+  updatedAt: timestamp().$onUpdate(() => new Date()),
   deletedAt: timestamp(),
 });

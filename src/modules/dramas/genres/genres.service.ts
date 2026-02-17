@@ -42,7 +42,10 @@ export class GenreService {
   async update(body: UpdateGenreDto, id: string) {
     const genre = await this.findOne(id);
 
-    const newBody = { ...body, slug: generateSlug(body.name || genre.name) };
+    const newBody = {
+      ...body,
+      slug: generateSlug(body.name || genre.name),
+    };
 
     const [updatedGenre] = await this.db
       .update(genres)
