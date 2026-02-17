@@ -6,6 +6,7 @@ import {
   Delete,
   Param,
   Body,
+  UseInterceptors,
 } from '@nestjs/common';
 import { GenreService } from './genres.service';
 import { CreateGenreDto } from './dto/create-genre.dto';
@@ -27,7 +28,6 @@ export class GenreController {
 
   @Post()
   store(@Body() body: CreateGenreDto) {
-    console.log(body.name);
     return this.genreService.store(body);
   }
 

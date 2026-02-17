@@ -21,7 +21,11 @@ export class GenreService {
   async store(body: CreateGenreDto) {
     const slugName = generateSlug(body.name || '');
     const newBody = { ...body, slug: slugName };
-    return await this.db.insert(genres).values(newBody).returning();
+    const [storeGenre] = await this.db
+      .insert(genres)
+      .values(newBody)
+      .returning();
+    return storeGenre;
   }
 
   async findOne(id: string) {
