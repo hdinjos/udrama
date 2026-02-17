@@ -6,6 +6,7 @@ import { MyZodValidationPipe } from './common/pipes/zod-validation.pipe';
 import { WinstonModule } from 'nest-winston';
 import { winstonConfig } from './common/loggers/logger.config';
 import { ResponseInterceptor } from 'src/common/interceptors/response.interceptor';
+import { SnakeCaseInterceptor } from 'src/common/interceptors/response-snakcase.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -16,6 +17,7 @@ async function bootstrap() {
   // app.useGlobalFilters(new ZodExceptionFilter());
   app.useGlobalPipes(new MyZodValidationPipe());
   app.useGlobalInterceptors(new ResponseInterceptor(app.get(Reflector)));
+  app.useGlobalInterceptors(new SnakeCaseInterceptor());
 
   await app.listen(process.env.PORT ?? 3000);
 }

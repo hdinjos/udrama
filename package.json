@@ -31,6 +31,7 @@
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.1",
     "ioredis": "^5.9.2",
+    "lodash": "^4.17.23",
     "nest-winston": "^1.10.2",
     "nestjs-zod": "^5.1.1",
     "pg": "^8.17.2",
