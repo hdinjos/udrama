@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { DramaService } from './dramas.service';
-import { CreateDramaDto } from './dto/create-drama.dto';
+import { CreateSeriesDto } from './dto/create-series.dto';
 
 interface DramaInfo {
   title: string;
@@ -25,7 +25,7 @@ interface ApiResponse<T> {
 
 type RetriveAllDramasResponse = ApiResponse<Drama[]>;
 
-@Controller('dramas')
+@Controller('series')
 export class DramasController {
   constructor(private readonly dramaService: DramaService) {}
 
@@ -35,20 +35,20 @@ export class DramasController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string): ApiResponse<Drama | null> {
+  findOne(@Param('id') id: string) {
     return this.dramaService.findOne(id);
   }
 
-  @Post()
-  store(@Body() body: CreateDramaDto): any {
-    return this.dramaService.store(body);
-  }
+  // @Post()
+  // store(@Body() body: CreateSeriesDto): any {
+  //   return this.dramaService.store(body);
+  // }
 
-  @Put(':id')
-  update(
-    @Body() body: DramaInfo,
-    @Param('id') id: string,
-  ): ApiResponse<Drama | null> {
-    return this.dramaService.update(body, id);
-  }
+  // @Put(':id')
+  // update(
+  //   @Body() body: DramaInfo,
+  //   @Param('id') id: string,
+  // ): ApiResponse<Drama | null> {
+  //   return this.dramaService.update(body, id);
+  // }
 }

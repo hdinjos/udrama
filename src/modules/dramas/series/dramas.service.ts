@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { DrizzleService } from 'src/core/database/drizzle.service';
 import * as schema from 'src/core/database/schemas';
 
@@ -27,113 +27,90 @@ export class DramaService {
     return this.drizzleService.db;
   }
 
-  async findAll() {
-    try {
-      const data = await this.db.query.series.findMany();
-      return {
-        message: 'retrieve all series',
-        data: data,
-      };
-    } catch (err) {
-      console.log(err);
-    }
+  findAll() {
+    return this.db.query.series.findMany();
   }
 
-  findOne(id: string): ApiResponse<Drama | null> {
-    const drama = this.idValidation(id);
+  async findOne(id: string) {
+    const series = await this.db.query.series.findFirst({
+      where: (series, { eq }) => eq(series.id, parseInt(id)),
+    });
 
-    if (!drama) {
-      return {
-        message: `drama with id ${id} not found`,
-        data: null,
-      };
+    if (!series) {
+      throw new NotFoundException(`series with id ${id} not found`);
     }
 
-    return {
-      message: 'retrieve a drama by id',
-      data: drama,
-    };
+    return series;
   }
 
   async store(body: any) {
-    // this.reqValidate(body);
-    // const lastData = this.dramas.at(-1);
+    const [reriesCreated] = await this.db
+      .insert(schema.series)
+      .values(body)
+      .returning();
 
-    // const lastIndex = lastData?.id || 0;
-
-    // const payload: Drama = {
-    //   id: lastIndex + 1,
-    //   ...body,
-    // };
-    // this.dramas = [...this.dramas, payload];
-
-    const result = await this.db.insert(schema.series).values(body).returning();
-
-    return {
-      message: 'created series success',
-      data: result,
-    };
+    return reriesCreated;
   }
 
-  update(body: DramaInfo, id: string) {
-    const drama = this.idValidation(id);
+  // update(body: DramaInfo, id: string) {
+  //   const drama = this.idValidation(id);
 
-    if (!drama) {
-      return {
-        message: `drama with id ${id} not found`,
-        data: null,
-      };
-    }
+  //   if (!drama) {
+  //     return {
+  //       message: `drama with id ${id} not found`,
+  //       data: null,
+  //     };
+  //   }
 
-    this.reqValidate(body);
+  //   this.reqValidate(body);
 
-    const dataUpdated = {
-      ...drama,
-      ...body,
-    };
+  //   const dataUpdated = {
+  //     ...drama,
+  //     ...body,
+  //   };
 
-    this.dramas = this.dramas.map((item) => {
-      if (item.id === parseInt(id)) {
-        return {
-          ...dataUpdated,
-        };
-      }
+  //   this.dramas = this.dramas.map((item) => {
+  //     if (item.id === parseInt(id)) {
+  //       return {
+  //         ...dataUpdated,
+  //       };
+  //     }
 
-      return item;
-    });
+  //     return item;
+  //   });
 
-    return {
-      message: 'update success',
-      data: dataUpdated,
-    };
-  }
+  //   return {
+  //     message: 'update success',
+  //     data: dataUpdated,
+  //   };
+  // }
 
-  private reqValidate(body: DramaInfo) {
-    let datakeys: string[] = [];
+  // private reqValidate(body: DramaInfo) {
+  //   let datakeys: string[] = [];
 
-    for (let key in body) {
-      datakeys.push(key);
-    }
+  //   for (let key in body) {
+  //     datakeys.push(key);
+  //   }
 
-    if (datakeys.length === 0) {
-      datakeys = [];
-      return {
-        message: 'wrong input',
-      };
-    } else if (
-      datakeys.length > 0 &&
-      datakeys[0] !== 'title' &&
-      datakeys[1] !== 'year'
-    ) {
-      datakeys = [];
-      return {
-        message: 'wrong input',
-      };
-    }
-    datakeys = [];
-  }
+  //   if (datakeys.length === 0) {
+  //     datakeys = [];
+  //     return {
+  //       message: 'wrong input',
+  //     };
+  //   } else if (
+  //     datakeys.length > 0 &&
+  //     datakeys[0] !== 'title' &&
+  //     datakeys[1] !== 'year'
+  //   ) {
+  //     datakeys = [];
+  //     return {
+  //       message: 'wrong input',
+  //     };
+  //   }
+  //   datakeys = [];
+  // }
 
-  private idValidation(id: string): any {
-    return this.dramas.find((d) => d.id === parseInt(id));
-  }
+  // private idValidation(id: string): any {
+  //   return this.dramas.find((d) => d.id === parseInt(id));
+  // }
 }
