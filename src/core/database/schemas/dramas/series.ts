@@ -6,6 +6,8 @@ import {
   timestamp,
   date,
 } from 'drizzle-orm/pg-core';
+import { series_genres } from './series_genres';
+import { relations } from 'drizzle-orm';
 
 export const series = pgTable('series', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -22,3 +24,7 @@ export const series = pgTable('series', {
   createdAt: timestamp().defaultNow().notNull(),
   deletedAt: timestamp(),
 });
+
+export const seriesRelations = relations(series, ({ many }) => ({
+  series_genres: many(series_genres),
+}));

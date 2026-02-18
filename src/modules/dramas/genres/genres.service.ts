@@ -28,9 +28,9 @@ export class GenreService {
     return storeGenre;
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     const genre = await this.db.query.genres.findFirst({
-      where: (field, { eq }) => eq(field.id, Number(id)),
+      where: (field, { eq }) => eq(field.id, id),
     });
     if (!genre) {
       throw new NotFoundException('Genre not found');
@@ -39,7 +39,7 @@ export class GenreService {
     return genre;
   }
 
-  async update(body: UpdateGenreDto, id: string) {
+  async update(body: UpdateGenreDto, id: number) {
     const genre = await this.findOne(id);
 
     const newBody = {
@@ -56,12 +56,12 @@ export class GenreService {
     return updatedGenre;
   }
 
-  async destroy(id: string) {
+  async destroy(id: number) {
     await this.findOne(id);
 
     const [deleteGenre] = await this.db
       .delete(genres)
-      .where(eq(genres.id, Number(id)))
+      .where(eq(genres.id, id))
       .returning();
 
     return deleteGenre;

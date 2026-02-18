@@ -4,6 +4,8 @@ import * as schema from 'src/core/database/schemas';
 import { eq } from 'drizzle-orm';
 import { CreateSeriesDto } from './dto/create-series.dto';
 import { UpdateSeriesDto } from './dto/update-series.dto';
+import { GenreService } from '../genres/genres.service';
+import { AssignGenreDto } from './dto/assign-genre.dto';
 
 interface DramaInfo {
   title: string;
@@ -24,7 +26,10 @@ type RetriveAllDramasResponse = ApiResponse<Drama[]>;
 export class DramaService {
   private dramas: Drama[] = [];
 
-  constructor(private readonly drizzleService: DrizzleService) {}
+  constructor(
+    private readonly drizzleService: DrizzleService,
+    private readonly genreService: GenreService,
+  ) {}
 
   private get db() {
     return this.drizzleService.db;
@@ -37,13 +42,25 @@ export class DramaService {
   async findOne(id: number) {
     const series = await this.db.query.series.findFirst({
       where: (series, { eq }) => eq(series.id, id),
+      with: {
+        series_genres: {
+          with: {
+            genre: true,
+          },
+        },
+      },
     });
 
     if (!series) {
       throw new NotFoundException(`series with id ${id} not found`);
     }
 
-    return series;
+    const { series_genres, ...rest } = series;
+
+    return {
+      ...rest,
+      genre: series_genres.map((g) => ({ id: g.genre.id, name: g.genre.name })),
+    };
   }
 
   async store(body: CreateSeriesDto) {
@@ -76,5 +93,19 @@ export class DramaService {
       .returning();
 
     return deletedSeries;
+  }
+
+  async assingGenre(id: number, { genre_id }: AssignGenreDto) {
+    await this.findOne(id);
+    await this.genreService.findOne(genre_id);
+    console.log({ id });
+    console.log({ genre_id });
+    return this.db
+      .insert(schema.series_genres)
+      .values({
+        seriesId: id,
+        genreId: genre_id,
+      })
+      .returning();
   }
 }

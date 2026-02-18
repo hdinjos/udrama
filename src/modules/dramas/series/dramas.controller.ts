@@ -11,6 +11,7 @@ import {
 import { DramaService } from './dramas.service';
 import { CreateSeriesDto } from './dto/create-series.dto';
 import { UpdateSeriesDto } from './dto/update-series.dto';
+import { AssignGenreDto } from './dto/assign-genre.dto';
 
 @Controller('series')
 export class DramasController {
@@ -39,5 +40,13 @@ export class DramasController {
   @Delete(':id')
   destroy(@Param('id', ParseIntPipe) id: number) {
     return this.dramaService.destroy(id);
+  }
+
+  @Post(':id/genre')
+  storeGenre(
+    @Body() body: AssignGenreDto,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.dramaService.assingGenre(id, body);
   }
 }
