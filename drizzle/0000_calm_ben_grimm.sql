@@ -41,3 +41,11 @@ CREATE TABLE "roles" (
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"deleted_at" timestamp
 );
+--> statement-breakpoint
+CREATE TABLE "countries" (
+	"code" varchar(255) PRIMARY KEY NOT NULL,
+	"name" varchar(255) NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp,
+	"deleted_at" timestamp
+);
