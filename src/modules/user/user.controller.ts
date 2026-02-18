@@ -9,24 +9,6 @@ import { Role } from 'src/common/enums/roles.enum';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('gen')
-  generateUser() {
-    this.userService.generateUser();
-    return {
-      success: true,
-      message: 'generate user success',
-    };
-  }
-
-  @Get('gen-role')
-  generateRole() {
-    this.userService.generateRole();
-    return {
-      success: true,
-      message: 'generate role success',
-    };
-  }
-
   @Get()
   async getUsers() {
     const data = await this.userService.getUsers();

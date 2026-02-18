@@ -4,7 +4,6 @@ import * as schema from '../database/schemas';
 import 'dotenv/config';
 
 export function createDatabase(connectionString: string) {
-  console.log({ connectionString });
   const pool = new Pool({
     connectionString,
   });

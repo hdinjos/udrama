@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DrizzleService } from 'src/core/database/drizzle.service';
 import { PasswordService } from 'src/common/security/password/pasword.service';
-import { users, roles } from 'src/core/database/schemas';
+import { users } from 'src/core/database/schemas';
 import { eq } from 'drizzle-orm';
 import { CreateUserDto } from './dto/user-create.dto';
 
@@ -27,27 +27,6 @@ export class UserService {
         role: true,
       },
     });
-  }
-
-  public async generateUser() {
-    const passHash = await this.defaultPasswordHash();
-    await this.db.insert(users).values({
-      name: 'ngadmin',
-      password: passHash,
-      email: 'ngadmin@gmail.com',
-    });
-  }
-
-  public async generateRole() {
-    const roleNames = [
-      {
-        name: 'admin',
-      },
-      {
-        name: 'user',
-      },
-    ];
-    await this.db.insert(roles).values(roleNames);
   }
 
   public async getUsers() {
