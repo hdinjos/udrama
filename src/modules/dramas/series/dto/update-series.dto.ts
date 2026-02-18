@@ -1,7 +1,7 @@
 import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
-const CreateSeriesSchema = z.object({
+const UpdateSeriesSchema = z.object({
   title: z.string().min(1),
   year: z.number().min(1),
   description: z.string().optional(),
@@ -10,4 +10,4 @@ const CreateSeriesSchema = z.object({
   thumbnail_url: z.string().optional(),
 });
 
-export class CreateSeriesDto extends createZodDto(CreateSeriesSchema) {}
+export class UpdateSeriesDto extends createZodDto(UpdateSeriesSchema) {}

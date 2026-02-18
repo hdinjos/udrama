@@ -12,9 +12,9 @@ export const series = pgTable('series', {
   title: varchar({ length: 255 }).notNull(),
   description: text(),
   year: integer().notNull(),
-  realease_date: date(),
-  country_id: integer(),
-  thumbnail_url: text(),
+  releaseDate: date(),
+  countryId: integer(),
+  thumbnailUrl: text(),
   updatedAt: timestamp()
     .$onUpdate(() => new Date())
     .defaultNow()

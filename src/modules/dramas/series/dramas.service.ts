@@ -1,6 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DrizzleService } from 'src/core/database/drizzle.service';
 import * as schema from 'src/core/database/schemas';
+import { eq } from 'drizzle-orm';
+import { CreateSeriesDto } from './dto/create-series.dto';
+import { UpdateSeriesDto } from './dto/update-series.dto';
 
 interface DramaInfo {
   title: string;
@@ -31,9 +34,9 @@ export class DramaService {
     return this.db.query.series.findMany();
   }
 
-  async findOne(id: string) {
+  async findOne(id: number) {
     const series = await this.db.query.series.findFirst({
-      where: (series, { eq }) => eq(series.id, parseInt(id)),
+      where: (series, { eq }) => eq(series.id, id),
     });
 
     if (!series) {
@@ -43,7 +46,7 @@ export class DramaService {
     return series;
   }
 
-  async store(body: any) {
+  async store(body: CreateSeriesDto) {
     const [reriesCreated] = await this.db
       .insert(schema.series)
       .values(body)
@@ -52,65 +55,26 @@ export class DramaService {
     return reriesCreated;
   }
 
-  // update(body: DramaInfo, id: string) {
-  //   const drama = this.idValidation(id);
+  async update(body: UpdateSeriesDto, id: number) {
+    await this.findOne(id);
 
-  //   if (!drama) {
-  //     return {
-  //       message: `drama with id ${id} not found`,
-  //       data: null,
-  //     };
-  //   }
+    const [updateSeries] = await this.db
+      .update(schema.series)
+      .set(body)
+      .where(eq(schema.series.id, id))
+      .returning();
 
-  //   this.reqValidate(body);
+    return updateSeries;
+  }
 
-  //   const dataUpdated = {
-  //     ...drama,
-  //     ...body,
-  //   };
+  async destroy(id: number) {
+    await this.findOne(id);
 
-  //   this.dramas = this.dramas.map((item) => {
-  //     if (item.id === parseInt(id)) {
-  //       return {
-  //         ...dataUpdated,
-  //       };
-  //     }
+    const [deletedSeries] = await this.db
+      .delete(schema.series)
+      .where(eq(schema.series.id, id))
+      .returning();
 
-  //     return item;
-  //   });
-
-  //   return {
-  //     message: 'update success',
-  //     data: dataUpdated,
-  //   };
-  // }
-
-  // private reqValidate(body: DramaInfo) {
-  //   let datakeys: string[] = [];
-
-  //   for (let key in body) {
-  //     datakeys.push(key);
-  //   }
-
-  //   if (datakeys.length === 0) {
-  //     datakeys = [];
-  //     return {
-  //       message: 'wrong input',
-  //     };
-  //   } else if (
-  //     datakeys.length > 0 &&
-  //     datakeys[0] !== 'title' &&
-  //     datakeys[1] !== 'year'
-  //   ) {
-  //     datakeys = [];
-  //     return {
-  //       message: 'wrong input',
-  //     };
-  //   }
-  //   datakeys = [];
-  // }
-
-  // private idValidation(id: string): any {
-  //   return this.dramas.find((d) => d.id === parseInt(id));
-  // }
+    return deletedSeries;
+  }
 }

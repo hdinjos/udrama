@@ -5,25 +5,12 @@ import {
   Post,
   Body,
   Put,
-  UseGuards,
+  Delete,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { DramaService } from './dramas.service';
 import { CreateSeriesDto } from './dto/create-series.dto';
-
-interface DramaInfo {
-  title: string;
-  year: number;
-}
-interface Drama extends DramaInfo {
-  id: number;
-}
-
-interface ApiResponse<T> {
-  message: string;
-  data: T;
-}
-
-type RetriveAllDramasResponse = ApiResponse<Drama[]>;
+import { UpdateSeriesDto } from './dto/update-series.dto';
 
 @Controller('series')
 export class DramasController {
@@ -35,20 +22,22 @@ export class DramasController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.dramaService.findOne(id);
   }
 
-  // @Post()
-  // store(@Body() body: CreateSeriesDto): any {
-  //   return this.dramaService.store(body);
-  // }
+  @Post()
+  store(@Body() body: CreateSeriesDto): any {
+    return this.dramaService.store(body);
+  }
 
-  // @Put(':id')
-  // update(
-  //   @Body() body: DramaInfo,
-  //   @Param('id') id: string,
-  // ): ApiResponse<Drama | null> {
-  //   return this.dramaService.update(body, id);
-  // }
+  @Put(':id')
+  update(@Body() body: UpdateSeriesDto, @Param('id', ParseIntPipe) id: number) {
+    return this.dramaService.update(body, id);
+  }
+
+  @Delete(':id')
+  destroy(@Param('id', ParseIntPipe) id: number) {
+    return this.dramaService.destroy(id);
+  }
 }

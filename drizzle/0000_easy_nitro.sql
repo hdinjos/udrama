@@ -3,7 +3,7 @@ CREATE TABLE "series" (
 	"title" varchar(255) NOT NULL,
 	"description" text,
 	"year" integer NOT NULL,
-	"realease_date" date,
+	"release_date" date,
 	"country_id" integer,
 	"thumbnail_url" text,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
