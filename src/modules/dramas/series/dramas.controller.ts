@@ -12,6 +12,7 @@ import { DramaService } from './dramas.service';
 import { CreateSeriesDto } from './dto/create-series.dto';
 import { UpdateSeriesDto } from './dto/update-series.dto';
 import { AssignGenreDto } from './dto/assign-genre.dto';
+import { CreateEpisodeDto } from './dto/create-episode.dto';
 
 @Controller('series')
 export class DramasController {
@@ -48,5 +49,13 @@ export class DramasController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.dramaService.attachGenre(id, body);
+  }
+
+  @Post(':id/episode')
+  storeEpisode(
+    @Body() body: CreateEpisodeDto,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return this.dramaService.storeEpisode(id, body);
   }
 }

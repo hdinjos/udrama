@@ -10,6 +10,7 @@ import { CreateSeriesDto } from './dto/create-series.dto';
 import { UpdateSeriesDto } from './dto/update-series.dto';
 import { GenreService } from '../genres/genres.service';
 import { AssignGenreDto } from './dto/assign-genre.dto';
+import { CreateEpisodeDto } from './dto/create-episode.dto';
 
 interface DramaInfo {
   title: string;
@@ -52,6 +53,7 @@ export class DramaService {
             genre: true,
           },
         },
+        episodes: true,
       },
     });
 
@@ -127,5 +129,15 @@ export class DramaService {
     }
   }
 
-  async;
+  async storeEpisode(id: number, body: CreateEpisodeDto) {
+    await this.findOne(id);
+
+    const newBody = { episodeNumber: body.episode_number, seriesId: id };
+
+    const [storedEpisode] = await this.db
+      .insert(schema.episodes)
+      .values(newBody)
+      .returning();
+    return storedEpisode;
+  }
 }

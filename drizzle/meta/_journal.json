@@ -15,6 +15,13 @@
       "when": 1771426883945,
       "tag": "0001_melted_stellaris",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771512354945,
+      "tag": "0002_busy_lionheart",
+      "breakpoints": true
     }
   ]
 }
