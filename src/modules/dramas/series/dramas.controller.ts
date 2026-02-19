@@ -47,6 +47,6 @@ export class DramasController {
     @Body() body: AssignGenreDto,
     @Param('id', ParseIntPipe) id: number,
   ) {
-    return this.dramaService.assingGenre(id, body);
+    return this.dramaService.attachGenre(id, body);
   }
 }

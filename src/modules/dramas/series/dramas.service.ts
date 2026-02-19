@@ -1,7 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  ConflictException,
+} from '@nestjs/common';
 import { DrizzleService } from 'src/core/database/drizzle.service';
 import * as schema from 'src/core/database/schemas';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { CreateSeriesDto } from './dto/create-series.dto';
 import { UpdateSeriesDto } from './dto/update-series.dto';
 import { GenreService } from '../genres/genres.service';
@@ -95,17 +99,33 @@ export class DramaService {
     return deletedSeries;
   }
 
-  async assingGenre(id: number, { genre_id }: AssignGenreDto) {
+  async attachGenre(id: number, { genre_id, attach }: AssignGenreDto) {
     await this.findOne(id);
     await this.genreService.findOne(genre_id);
-    console.log({ id });
-    console.log({ genre_id });
-    return this.db
-      .insert(schema.series_genres)
-      .values({
-        seriesId: id,
-        genreId: genre_id,
-      })
-      .returning();
+    try {
+      if (attach) {
+        return await this.db
+          .insert(schema.series_genres)
+          .values({
+            seriesId: id,
+            genreId: genre_id,
+          })
+          .returning();
+      } else {
+        return await this.db
+          .delete(schema.series_genres)
+          .where(
+            and(
+              eq(schema.series_genres.seriesId, id),
+              eq(schema.series_genres.genreId, genre_id),
+            ),
+          )
+          .returning();
+      }
+    } catch (err) {
+      throw new ConflictException('Genre already exist');
+    }
   }
+
+  async;
 }
