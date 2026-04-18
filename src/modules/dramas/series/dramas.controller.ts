@@ -7,6 +7,8 @@ import {
   Put,
   Delete,
   ParseIntPipe,
+  Query,
+  DefaultValuePipe,
 } from '@nestjs/common';
 import { DramaService } from './dramas.service';
 import { CreateSeriesDto } from './dto/create-series.dto';
@@ -23,15 +25,14 @@ export class DramasController {
   ) {}
 
   @Get()
-  async findAll(): Promise<any> {
-    const results = await this.dramaService.findAll();
-    return results.map((s) => {
-      const { series_genres, ...rest } = s;
-      return {
-        ...rest,
-        genre: series_genres.map((g) => ({ id: g.genre.id, name: g.genre.name })),
-      };
-    });
+  async findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
+    @Query('search') search?: string,
+    @Query('genreId', new DefaultValuePipe(null), ParseIntPipe) genreId?: number,
+    @Query('countryId') countryId?: string,
+  ) {
+    return this.dramaService.findAll({ page, limit, search, genreId, countryId });
   }
 
   @Get(':id')

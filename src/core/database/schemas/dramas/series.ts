@@ -9,6 +9,7 @@ import {
 import { series_genres } from './series_genres';
 import { relations } from 'drizzle-orm';
 import { episodes } from './episodes';
+import { countries } from '../countries/countries';
 
 export const series = pgTable('series', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -21,7 +22,7 @@ export const series = pgTable('series', {
   endYear: integer(),
   rating: decimal({ precision: 2, scale: 1 }),
   voteCount: integer(),
-  countryId: integer(),
+  countryId: varchar({ length: 3 }),
   thumbnailUrl: text(),
   updatedAt: timestamp()
     .$onUpdate(() => new Date())
@@ -31,7 +32,11 @@ export const series = pgTable('series', {
   deletedAt: timestamp(),
 });
 
-export const seriesRelations = relations(series, ({ many }) => ({
+export const seriesRelations = relations(series, ({ one, many }) => ({
   series_genres: many(series_genres),
   episodes: many(episodes),
+  country: one(countries, {
+    fields: [series.countryId],
+    references: [countries.code],
+  }),
 }));

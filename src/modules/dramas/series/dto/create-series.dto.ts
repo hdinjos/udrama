@@ -11,7 +11,7 @@ const CreateSeriesSchema = z.object({
   end_year: z.number().optional(),
   rating: z.number().optional(),
   vote_count: z.number().optional(),
-  country_id: z.number().optional(),
+  country_id: z.string().max(3).optional(),
   thumbnail_url: z.string().optional(),
 });
 

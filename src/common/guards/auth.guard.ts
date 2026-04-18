@@ -36,7 +36,7 @@ export class AuthGuard implements CanActivate {
     const token = this.getToken(request);
     if (!token) throw new UnauthorizedException();
 
-    const blacklistToken = await this.redisService.get('blacklist:${token}');
+    const blacklistToken = await this.redisService.get(`blacklist:${token}`);
     if (blacklistToken === token) throw new UnauthorizedException();
 
     try {

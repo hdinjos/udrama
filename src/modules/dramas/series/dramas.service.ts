@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { DrizzleService } from 'src/core/database/drizzle.service';
 import * as schema from 'src/core/database/schemas';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, ilike, count, sql, isNull } from 'drizzle-orm';
 import { CreateSeriesDto } from './dto/create-series.dto';
 import { UpdateSeriesDto } from './dto/update-series.dto';
 import { GenreService } from '../genres/genres.service';
@@ -40,8 +40,60 @@ export class DramaService {
     return this.drizzleService.db;
   }
 
-  findAll() {
-    return this.db.query.series.findMany({
+ async findAll({
+    page = 1,
+    limit = 20,
+    search,
+    genreId,
+    countryId,
+  }: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    genreId?: number;
+    countryId?: string;
+  }) {
+    const offset = (page - 1) * limit;
+
+    const whereConditions = [isNull(schema.series.deletedAt)];
+
+    if (search) {
+      whereConditions.push(
+        ilike(schema.series.primaryTitle, `%${search}%`),
+      );
+    }
+
+    if (genreId) {
+      const seriesWithGenre = await this.db
+        .select({ seriesId: schema.series_genres.seriesId })
+        .from(schema.series_genres)
+        .where(eq(schema.series_genres.genreId, genreId));
+
+      const seriesIds = seriesWithGenre.map((s) => s.seriesId);
+      if (seriesIds.length > 0) {
+        whereConditions.push(eq(schema.series.id, seriesIds[0]));
+      } else {
+        whereConditions.push(sql`1=0`);
+      }
+    }
+
+    if (countryId) {
+      whereConditions.push(eq(schema.series.countryId, countryId));
+    }
+
+    const [totalResult] = await this.db
+      .select({ total: count() })
+      .from(schema.series)
+      .where(and(...whereConditions));
+
+    const total = totalResult.total;
+    const totalPages = Math.ceil(total / limit);
+
+    const series = await this.db.query.series.findMany({
+      where: and(...whereConditions),
+      limit,
+      offset,
+      orderBy: schema.series.createdAt,
       with: {
         series_genres: {
           with: {
@@ -50,6 +102,24 @@ export class DramaService {
         },
       },
     });
+
+    const result = series.map(({ series_genres, ...rest }) => ({
+      ...rest,
+      genre: series_genres.map((g) => ({
+        id: g.genre.id,
+        name: g.genre.name,
+      })),
+    }));
+
+    return {
+      data: result,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages,
+      },
+    };
   }
 
   async findOne(id: number) {

@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/signin.dto';
+import { RegisterDto } from './dto/register.dto';
 import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('auth')
@@ -21,6 +22,12 @@ export class AuthController {
 
     if (data) return data;
     throw new BadRequestException('email or password invalid');
+  }
+
+  @Public()
+  @Post('register')
+  async register(@Body() body: RegisterDto) {
+    return await this.authService.register(body);
   }
 
   @Get('profile')
