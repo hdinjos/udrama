@@ -4,7 +4,7 @@ import {
   varchar,
   text,
   timestamp,
-  date,
+  decimal,
 } from 'drizzle-orm/pg-core';
 import { series_genres } from './series_genres';
 import { relations } from 'drizzle-orm';
@@ -12,10 +12,15 @@ import { episodes } from './episodes';
 
 export const series = pgTable('series', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  title: varchar({ length: 255 }).notNull(),
-  description: text(),
-  year: integer().notNull(),
-  releaseDate: date(),
+  imdbId: varchar({ length: 20 }).unique(),
+  type: varchar({ length: 20 }),
+  primaryTitle: varchar({ length: 255 }).notNull(),
+  originalTitle: varchar({ length: 255 }),
+  plot: text(),
+  startYear: integer(),
+  endYear: integer(),
+  rating: decimal({ precision: 2, scale: 1 }),
+  voteCount: integer(),
   countryId: integer(),
   thumbnailUrl: text(),
   updatedAt: timestamp()

@@ -41,7 +41,15 @@ export class DramaService {
   }
 
   findAll() {
-    return this.db.query.series.findMany();
+    return this.db.query.series.findMany({
+      with: {
+        series_genres: {
+          with: {
+            genre: true,
+          },
+        },
+      },
+    });
   }
 
   async findOne(id: number) {
@@ -70,24 +78,48 @@ export class DramaService {
   }
 
   async store(body: CreateSeriesDto) {
-    const [reriesCreated] = await this.db
+    const [created] = await this.db
       .insert(schema.series)
-      .values(body)
+      .values({
+        imdbId: body.imdb_id,
+        type: body.type,
+        primaryTitle: body.primary_title,
+        originalTitle: body.original_title,
+        plot: body.plot,
+        startYear: body.start_year,
+        endYear: body.end_year,
+        rating: body.rating != null ? body.rating.toString() : undefined,
+        voteCount: body.vote_count,
+        countryId: body.country_id,
+        thumbnailUrl: body.thumbnail_url,
+      })
       .returning();
 
-    return reriesCreated;
+    return created;
   }
 
   async update(body: UpdateSeriesDto, id: number) {
     await this.findOne(id);
 
-    const [updateSeries] = await this.db
+    const [updated] = await this.db
       .update(schema.series)
-      .set(body)
+      .set({
+        imdbId: body.imdb_id,
+        type: body.type,
+        primaryTitle: body.primary_title,
+        originalTitle: body.original_title,
+        plot: body.plot,
+        startYear: body.start_year,
+        endYear: body.end_year,
+        rating: body.rating != null ? body.rating.toString() : undefined,
+        voteCount: body.vote_count,
+        countryId: body.country_id,
+        thumbnailUrl: body.thumbnail_url,
+      })
       .where(eq(schema.series.id, id))
       .returning();
 
-    return updateSeries;
+    return updated;
   }
 
   async destroy(id: number) {
@@ -132,7 +164,17 @@ export class DramaService {
   async storeEpisode(id: number, body: CreateEpisodeDto) {
     await this.findOne(id);
 
-    const newBody = { episodeNumber: body.episode_number, seriesId: id };
+    const newBody = {
+      imdbId: body.imdb_id,
+      title: body.title,
+      season: body.season,
+      episodeNumber: body.episode_number,
+      plot: body.plot,
+      urlVideo: body.url_video,
+      runtimeSeconds: body.runtime_seconds,
+      releaseDate: body.release_date || undefined,
+      seriesId: id,
+    };
 
     const [storedEpisode] = await this.db
       .insert(schema.episodes)

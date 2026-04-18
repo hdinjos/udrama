@@ -13,14 +13,25 @@ import { CreateSeriesDto } from './dto/create-series.dto';
 import { UpdateSeriesDto } from './dto/update-series.dto';
 import { AssignGenreDto } from './dto/assign-genre.dto';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
+import { ImdbService } from '../services/imdb.service';
 
 @Controller('series')
 export class DramasController {
-  constructor(private readonly dramaService: DramaService) {}
+  constructor(
+    private readonly dramaService: DramaService,
+    private readonly imdbService: ImdbService,
+  ) {}
 
   @Get()
-  findAll(): any {
-    return this.dramaService.findAll();
+  async findAll(): Promise<any> {
+    const results = await this.dramaService.findAll();
+    return results.map((s) => {
+      const { series_genres, ...rest } = s;
+      return {
+        ...rest,
+        genre: series_genres.map((g) => ({ id: g.genre.id, name: g.genre.name })),
+      };
+    });
   }
 
   @Get(':id')
@@ -57,5 +68,10 @@ export class DramasController {
     @Param('id', ParseIntPipe) id: number,
   ) {
     return this.dramaService.storeEpisode(id, body);
+  }
+
+  @Post('sync-imdb')
+  syncImdb() {
+    return this.imdbService.syncAll();
   }
 }

@@ -2,10 +2,15 @@ import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
 
 const CreateSeriesSchema = z.object({
-  title: z.string().min(1),
-  year: z.number().min(1),
-  description: z.string().optional(),
-  release_date: z.date().optional(),
+  imdb_id: z.string().optional(),
+  type: z.string().optional(),
+  primary_title: z.string().min(1),
+  original_title: z.string().optional(),
+  plot: z.string().optional(),
+  start_year: z.number().optional(),
+  end_year: z.number().optional(),
+  rating: z.number().optional(),
+  vote_count: z.number().optional(),
   country_id: z.number().optional(),
   thumbnail_url: z.string().optional(),
 });
