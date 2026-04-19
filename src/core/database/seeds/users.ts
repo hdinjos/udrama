@@ -8,6 +8,7 @@ export async function seedUser() {
     {
       email: 'ngadmin@gmail.com',
       password: generatePassword,
+      roleId: 1,
     },
   ]);
   console.log('Users seeded successfully');
