@@ -40,7 +40,7 @@ export class DramaService {
     return this.drizzleService.db;
   }
 
- async findAll({
+  async findAll({
     page = 1,
     limit = 20,
     search,
@@ -58,9 +58,7 @@ export class DramaService {
     const whereConditions = [isNull(schema.series.deletedAt)];
 
     if (search) {
-      whereConditions.push(
-        ilike(schema.series.primaryTitle, `%${search}%`),
-      );
+      whereConditions.push(ilike(schema.series.primaryTitle, `%${search}%`));
     }
 
     if (genreId) {

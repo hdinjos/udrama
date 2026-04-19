@@ -7,6 +7,7 @@ import { RedisService } from 'src/core/redis/redis.service';
 import { RegisterDto } from './dto/register.dto';
 import { DrizzleService } from 'src/core/database/drizzle.service';
 import { users } from 'src/core/database/schemas';
+import { GoogleAuthService } from 'src/common/auth/google-auth/google-auth.service';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +17,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly redisService: RedisService,
     private readonly drizzleService: DrizzleService,
+    private readonly googleAuthService: GoogleAuthService,
   ) {}
 
   async signIn({ email, password }: LoginDto) {
@@ -54,6 +56,48 @@ export class AuthService {
         name,
         email,
         password: hashedPassword,
+        roleId: 2,
+      })
+      .returning({ id: users.id, name: users.name, email: users.email });
+
+    const token = await this.jwtService.signAsync({
+      sub: newUser.id,
+      email: newUser.email,
+      role_id: 2,
+      role_name: 'user',
+    });
+
+    return {
+      access_token: token,
+    };
+  }
+
+  async googleSignIn({ credential }: { credential: string }) {
+    const googlePayload =
+      await this.googleAuthService.verifyIdToken(credential);
+
+    const existingUser = await this.userService.findUserByEmail(
+      googlePayload.email,
+    );
+    if (existingUser) {
+      const token = await this.jwtService.signAsync({
+        sub: existingUser.id,
+        email: existingUser.email,
+        role_id: existingUser.role?.id,
+        role_name: existingUser.role?.name,
+      });
+
+      return {
+        access_token: token,
+      };
+    }
+
+    const [newUser] = await this.drizzleService.db
+      .insert(users)
+      .values({
+        name: googlePayload.name,
+        email: googlePayload.email,
+        password: null,
         roleId: 2,
       })
       .returning({ id: users.id, name: users.name, email: users.email });

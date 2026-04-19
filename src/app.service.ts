@@ -5,6 +5,6 @@ export class AppService {
   getHello(): { message: string } {
     return {
       message: 'Welcome to udrama API service!',
-    }
+    };
   }
 }

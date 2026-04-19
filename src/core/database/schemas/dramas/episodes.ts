@@ -1,4 +1,11 @@
-import { pgTable, integer, text, varchar, date, timestamp } from 'drizzle-orm/pg-core';
+import {
+  pgTable,
+  integer,
+  text,
+  varchar,
+  date,
+  timestamp,
+} from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 import { series } from './series';
 

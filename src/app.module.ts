@@ -10,6 +10,7 @@ import { RedisModule } from './core/redis/redis.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
+import googleConfig from './config/google.config';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard, RoleGuard } from './common/guards';
 
@@ -17,7 +18,7 @@ import { AuthGuard, RoleGuard } from './common/guards';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig, jwtConfig],
+      load: [appConfig, databaseConfig, jwtConfig, googleConfig],
     }),
     DramasModule,
     DatabaseModule,

@@ -3,6 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UserModule } from 'src/modules/user/user.module';
 import { PasswordModule } from 'src/common/security/password/password.module';
+import { GoogleAuthModule } from 'src/common/auth/google-auth/google-auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 
@@ -11,6 +12,7 @@ import { ConfigService } from '@nestjs/config';
   imports: [
     UserModule,
     PasswordModule,
+    GoogleAuthModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({

@@ -5,10 +5,12 @@ import {
   BadRequestException,
   Get,
   Request,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/signin.dto';
 import { RegisterDto } from './dto/register.dto';
+import { GoogleSignInDto } from './dto/google-signin.dto';
 import { Public } from 'src/common/decorators/public.decorator';
 
 @Controller('auth')
@@ -28,6 +30,19 @@ export class AuthController {
   @Post('register')
   async register(@Body() body: RegisterDto) {
     return await this.authService.register(body);
+  }
+
+  @Public()
+  @Post('google')
+  async googleSignIn(@Body() body: GoogleSignInDto) {
+    try {
+      return await this.authService.googleSignIn(body);
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw new UnauthorizedException(error.message);
+      }
+      throw new BadRequestException('Google sign-in failed');
+    }
   }
 
   @Get('profile')

@@ -5,7 +5,7 @@ import { roles } from './roles';
 export const users = pgTable('users', {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   email: varchar({ length: 255 }).notNull().unique(),
-  password: varchar({ length: 255 }).notNull().notNull(),
+  password: varchar({ length: 255 }),
   name: varchar({ length: 255 }),
   updatedAt: timestamp(),
   createdAt: timestamp().defaultNow().notNull(),

@@ -29,10 +29,17 @@ export class DramasController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('limit', new DefaultValuePipe(20), ParseIntPipe) limit: number,
     @Query('search') search?: string,
-    @Query('genreId', new DefaultValuePipe(null), ParseIntPipe) genreId?: number,
+    @Query('genreId', new DefaultValuePipe(null), ParseIntPipe)
+    genreId?: number,
     @Query('countryId') countryId?: string,
   ) {
-    return this.dramaService.findAll({ page, limit, search, genreId, countryId });
+    return this.dramaService.findAll({
+      page,
+      limit,
+      search,
+      genreId,
+      countryId,
+    });
   }
 
   @Get(':id')

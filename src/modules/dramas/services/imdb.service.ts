@@ -59,7 +59,9 @@ export class ImdbService {
 
     const response = await fetch(`${this.API_URL}?${params}`);
     if (!response.ok) {
-      throw new Error(`IMDB API error: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `IMDB API error: ${response.status} ${response.statusText}`,
+      );
     }
     return response.json();
   }
@@ -98,7 +100,9 @@ export class ImdbService {
     });
     const existingGenreMap = new Map(existingGenres.map((g) => [g.name, g.id]));
 
-    const newGenreNames = [...genreNames].filter((n) => !existingGenreMap.has(n));
+    const newGenreNames = [...genreNames].filter(
+      (n) => !existingGenreMap.has(n),
+    );
     this.logger.log(`New genres to insert: ${newGenreNames.length}`);
 
     for (const name of newGenreNames) {
@@ -117,7 +121,9 @@ export class ImdbService {
     const existingSeries = await this.db.query.series.findMany({
       columns: { imdbId: true, id: true },
     });
-    const existingSeriesMap = new Map(existingSeries.map((s) => [s.imdbId, s.id]));
+    const existingSeriesMap = new Map(
+      existingSeries.map((s) => [s.imdbId, s.id]),
+    );
 
     const newSeries = allTitles.filter((t) => !existingSeriesMap.has(t.id));
     const updatedSeries = allTitles.filter((t) => existingSeriesMap.has(t.id));
@@ -190,9 +196,9 @@ export class ImdbService {
       const newGenreIds = genreIds.filter((id) => !existingGenreIds.has(id));
 
       if (newGenreIds.length > 0) {
-        await this.db.insert(schema.series_genres).values(
-          newGenreIds.map((genreId) => ({ seriesId, genreId })),
-        );
+        await this.db
+          .insert(schema.series_genres)
+          .values(newGenreIds.map((genreId) => ({ seriesId, genreId })));
         linkedCount += newGenreIds.length;
       }
     }
